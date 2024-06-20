@@ -19,5 +19,5 @@ resources:
     type: route
     params:
       port: 8080
-      host: ${resources.example-dns.dns.host}
+      host: ${resources.example-dns.host}
       path: /

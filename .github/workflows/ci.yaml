@@ -36,3 +36,18 @@ jobs:
           file: score-compose
           version: 0.15.6
           token: ${{ secrets.GITHUB_TOKEN }}
+      - run: score-compose init
+      - run: score-compose generate score.yaml --image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.version }}
+      - run: docker compose up -d
+      - run: curl http://$(score-compose resources get-outputs 'dns.default#hello-world.example-dns' --format '{{.host}}'):8080 -v | tee | grep 'Score Example'
+  
+  release:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: score-spec/setup-score@v2
+        with:
+          file: score-k8s
+          version: 0.1.5
+          token: ${{ secrets.GITHUB_TOKEN }}
