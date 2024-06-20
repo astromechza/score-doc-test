@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,14 +23,7 @@ jobs:
           platforms: linux/amd64
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.version }}
-    outputs:
-      version: ${{ steps.semver.outputs.version }}
-  
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
+
       - uses: score-spec/setup-score@v2
         with:
           file: score-compose
@@ -40,6 +33,8 @@ jobs:
       - run: score-compose generate score.yaml --image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.version }}
       - run: docker compose up -d
       - run: curl http://$(score-compose resources get-outputs 'dns.default#hello-world.example-dns' --format '{{.host}}'):8080 -v | tee | grep 'Score Example'
+    outputs:
+      version: ${{ steps.semver.outputs.version }}
   
   release:
     runs-on: ubuntu-latest
