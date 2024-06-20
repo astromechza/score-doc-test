@@ -37,3 +37,4 @@ jobs:
       - uses: score-spec/setup-score@v2
         with:
           file: score-compose
+          version: latest
