@@ -30,7 +30,7 @@ jobs:
           version: 0.15.6
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: score-compose init
-      - run: score-compose generate score.yaml --image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.version }}
+      - run: score-compose generate score.yaml --image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.version }}
       - run: docker compose up -d
       - run: curl http://$(score-compose resources get-outputs 'dns.default#hello-world.example-dns' --format '{{.host}}'):8080 -v | tee | grep 'Score Example'
     outputs:
