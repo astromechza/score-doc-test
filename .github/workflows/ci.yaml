@@ -37,4 +37,5 @@ jobs:
       - uses: score-spec/setup-score@v2
         with:
           file: score-compose
-          version: latest
+          version: 0.15.6
+          token: ${{ secrets.GITHUB_TOKEN }}
